@@ -1,22 +1,16 @@
 <?php /* #?ini charset="utf-8"?
 
-[some_test_setting]
-some_test_option=bbbbbbbbbbbbbbbb
+[GeneralSettings]
+AttributeIdentifier=news_sitemap_include
+TimeInterval adds age's condition for objects that should be fetched in days; not required
+TimeInterval=0
 
 [Classes]
 Class_Filter_Type=include
 Class_Filter_Array[]
 Class_Filter_Array[]=articel
-Class_Filter_Array[]=article
-Class_Filter_Array[]=article_know
-Class_Filter_Array[]=article_qa
-Class_Filter_Array[]=image_gallery
-Class_Filter_Array[]=article_tips
-Class_Filter_Array[]=article_mm
-Class_Filter_Array[]=article_tf
 
 [SiteSettings]
-#SiteURL=http://mfa.dev198.nxc.ch
-SiteURL=http://www.planetesante.ch
+SiteURL=http://my.site.example.com
 
 */ ?>

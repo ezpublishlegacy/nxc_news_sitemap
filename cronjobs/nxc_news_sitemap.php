@@ -8,16 +8,23 @@ $tpl = eZTemplate::factory();
 $ParentNodeId = $contentIni->variable('NodeSettings', 'RootNode');
 $ClassFilterType = $ini->variable('Classes','Class_Filter_Type');
 $ClassFilterArray = $ini->variable('Classes','Class_Filter_Array');
+$attributeIdentifier = $ini->variable('GeneralSettings','AttributeIdentifier');
+$attributeFilter = false;
 $MainNodeOnly = true;
 $siteUrl = $ini->variable('SiteSettings', 'SiteURL');
 $limit = 20;
 $offset = 0;
 $depth = 20;
+
+if ($ini->hasVariable('GeneralSettings','TimeInterval') && $ini->variable('GeneralSettings','TimeInterval') != 0) {
+    $date = mktime(0, 0, 0, date('n'), ((int)date('j') - (int)$ini->variable('GeneralSettings','TimeInterval')), date('Y'));    
+    $attributeFilter = array( array( 'published', '>', $date ) );
+}
 $ExtendedAttributeFilter = array(
         'id'     => 'nxc_few_checkbox',
         'params' => array(
             'classes'     => $ClassFilterArray,
-            'attribute' => 'news_sitemap_include',
+            'attribute' => $attributeIdentifier,
             'cond' => array(
                 'ezcontentobject_attribute.data_int',
                 '=',
@@ -35,6 +42,10 @@ $params = array(
             'MainNodeOnly'    => $MainNodeOnly,
             'ExtendedAttributeFilter' => $ExtendedAttributeFilter
 );
+if ($attributeFilter) {
+    $params['AttributeFilter'] = $attributeFilter;
+}
+
 $result =
 '<?xml version="1.0" encoding="UTF-8"?>
 <urlset
@@ -62,14 +73,14 @@ do {
         $tpl->setVariable('site_url', $siteUrl);
         $result .= $tpl->fetch('design:nxc_news_sitemap/nxc_news_item.tpl');
         $object = $node->attribute( 'object' );
+        $cli->output($object->Name);
         eZContentObject::clearCache( $object->attribute( 'id' ) );
-        $object->resetDataMap();
-    }
-    $cli->output($params['Offset']);
+        $object->resetDataMap();        
+    }    
 } while (count($nodes));
 $result .= "</urlset>";
 eZFile::create('sitemap-news.xml', './var/storage/', $result);
-$cli->output('The google news sitemap for mfa was successfuly updated: ' . date('l dS of F Y h:i:s A'));
+$cli->output('The google news sitemap for '.$siteUrl.' was successfuly updated: ' . date('l dS of F Y h:i:s A'));
 
 eZExecution::cleanExit();
 
