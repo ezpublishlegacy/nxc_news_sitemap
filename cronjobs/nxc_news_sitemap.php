@@ -17,7 +17,7 @@ $offset = 0;
 $depth = 20;
 
 if ($ini->hasVariable('GeneralSettings','TimeInterval') && $ini->variable('GeneralSettings','TimeInterval') != 0) {
-    $date = mktime(0, 0, 0, date('n'), ((int)date('j') - (int)$ini->variable('GeneralSettings','TimeInterval')), date('Y'));    
+    $date = mktime(0, 0, 0, date('n'), ((int)date('j') - (int)$ini->variable('GeneralSettings','TimeInterval')), date('Y'));
     $attributeFilter = array( array( 'published', '>', $date ) );
 }
 $ExtendedAttributeFilter = array(
@@ -40,7 +40,8 @@ $params = array(
             'ClassFilterType' => $ClassFilterType,
             'ClassFilterArray'=> $ClassFilterArray,
             'MainNodeOnly'    => $MainNodeOnly,
-            'ExtendedAttributeFilter' => $ExtendedAttributeFilter
+            'ExtendedAttributeFilter' => $ExtendedAttributeFilter,
+            'SortBy' => array('published', false)
 );
 if ($attributeFilter) {
     $params['AttributeFilter'] = $attributeFilter;
@@ -75,8 +76,8 @@ do {
         $object = $node->attribute( 'object' );
         $cli->output($object->Name);
         eZContentObject::clearCache( $object->attribute( 'id' ) );
-        $object->resetDataMap();        
-    }    
+        $object->resetDataMap();
+    }
 } while (count($nodes));
 $result .= "</urlset>";
 eZFile::create('sitemap-news.xml', './var/storage/', $result);
