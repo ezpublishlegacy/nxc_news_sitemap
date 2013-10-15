@@ -18,7 +18,7 @@ $depth = 20;
 
 if ($ini->hasVariable('GeneralSettings','TimeInterval') && $ini->variable('GeneralSettings','TimeInterval') != 0) {
     $date = mktime(0, 0, 0, date('n'), ((int)date('j') - (int)$ini->variable('GeneralSettings','TimeInterval')), date('Y'));
-    $attributeFilter = array( array( 'published', '>', $date ) );
+    $attributeFilter = array( 'published', '>', $date );
 }
 $ExtendedAttributeFilter = array(
         'id'     => 'nxc_few_checkbox',
@@ -43,9 +43,18 @@ $params = array(
             'ExtendedAttributeFilter' => $ExtendedAttributeFilter,
             'SortBy' => array('published', false)
 );
-if ($attributeFilter) {
-    $params['AttributeFilter'] = $attributeFilter;
+
+if ( $ini->hasVariable( 'GeneralSettings', 'UseObjectStates' ) &&
+     $ini->variable( 'GeneralSettings', 'UseObjectStates' ) == 'true' &&
+     $ini->hasVariable( 'GeneralSettings', 'LiveObjectState' ) &&
+     (int)$ini->variable( 'GeneralSettings', 'LiveObjectState' ) > 0 ) {
+    $params['AttributeFilter'][] = array( 'state', '=', (int)$ini->variable( 'GeneralSettings', 'LiveObjectState' )  );
 }
+if ($attributeFilter) {
+    $params['AttributeFilter'][] = $attributeFilter;
+}
+
+var_dump($params);
 
 $result =
 '<?xml version="1.0" encoding="UTF-8"?>
